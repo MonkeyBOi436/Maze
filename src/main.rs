@@ -1,5 +1,5 @@
 /*
-By: <Your Name Here>
+By: <Austin>
 Date: 2026-09-21  
 Program Details: <Program Description Here>
 */
@@ -41,23 +41,23 @@ async fn main() {
 
 let tm = TextureManager::new();
 
-    let btn_text = TextButton::new(
+    let btn_exit = TextButton::new(
         100.0,
-        200.0,
+        1200.0,
         200.0,
         60.0,
-        "Exit Me",
-        BLUE,
+        "Exit",
+        RED,
         GREEN,
         30
     );
 
 
- tm.preload_all(&["assets/images.png", "assets/tom.png" , "assets/maze_1.png" , "assets/pumba.png" , "assets/g_bug.png", "assets/wall.png"]).await;
+ tm.preload_all(&["assets/tom.png" , "assets/maze_1.png" , "assets/pumba.png" , "assets/g_bug.png", "assets/wall.png" , "assets/wall_vert.png" , "assets/jerry.png"]).await;
 
- let mut lbl_out = Label::new("Hello\nWorld", 1150.0, 1150.0, 30);
+ let mut lbl_out = Label::new("You are trapped in a maze to escape\n you need to go through Pumba the pig.", 1150.0, 1150.0, 30);
 
-  lbl_out.with_colors(WHITE, Some(DARKGRAY));
+
     
 let mut img = StillImage::new(
         "",     // Empty string creates a transparent image
@@ -65,17 +65,6 @@ let mut img = StillImage::new(
         50.0,  // height
         40.0,  // x position
         30.0,   // y position
-        true,   // Enable stretching
-        1.0,    // Normal zoom (100%)
-    ).await;
-
-
-    let mut img_tom = StillImage::new(
-        "",     // Empty string creates a transparent image
-        100.0,  // width
-        200.0,  // height
-        600.0,  // x position
-        300.0,   // y position
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
@@ -110,6 +99,49 @@ let mut img = StillImage::new(
         1.0,    // Normal zoom (100%)
     ).await;
 
+    let mut img_jerry = StillImage::new(
+        "",     // Empty string creates a transparent image
+        104.0,  // width
+        108.0,  // height
+        1160.0,  // x position
+        980.0,   // y position
+        true,   // Enable stretching
+        1.0,    // Normal zoom (100%)
+    ).await;
+
+     let mut img_outside_wall_left = StillImage::new(
+        "",     // Empty string creates a transparent image
+        54.0,  // width
+        238.0,  // height
+        1960.0,  // x position
+        1080.0,   // y position
+        true,   // Enable stretching
+        1.0,    // Normal zoom (100%)
+    ).await;
+
+
+     let mut img_outside_wall_right = StillImage::new(
+        "",     // Empty string creates a transparent image
+        54.0,  // width
+        238.0,  // height
+        2230.0,  // x position
+        1080.0,   // y position
+        true,   // Enable stretching
+        1.0,    // Normal zoom (100%)
+    ).await;
+
+
+     let mut img_outside_wall_down = StillImage::new(
+        "",     // Empty string creates a transparent image
+        304.0,  // width
+        58.0,  // height
+        1960.0,  // x position
+        1280.0,   // y position
+        true,   // Enable stretching
+        1.0,    // Normal zoom (100%)
+    ).await;
+
+
             let mut img_wall = StillImage::new(
         "",     // Empty string creates a transparent image
         154.0,  // width
@@ -123,12 +155,15 @@ let mut img = StillImage::new(
 
     let mut wall_left = true;
 
-    img.set_preload(tm.get_preload("assets/images.png").unwrap());
-    img_tom.set_preload(tm.get_preload("assets/tom.png").unwrap());
+    img.set_preload(tm.get_preload("assets/tom.png").unwrap());
     img_maze.set_preload(tm.get_preload("assets/maze_1.png").unwrap());
         img_pumba.set_preload(tm.get_preload("assets/pumba.png").unwrap());
     img_bug.set_preload(tm.get_preload("assets/g_bug.png").unwrap());
 img_wall.set_preload(tm.get_preload("assets/wall.png").unwrap());
+img_outside_wall_left.set_preload(tm.get_preload("assets/wall_vert.png").unwrap());
+img_outside_wall_right.set_preload(tm.get_preload("assets/wall_vert.png").unwrap());
+img_outside_wall_down.set_preload(tm.get_preload("assets/wall.png").unwrap());
+img_jerry.set_preload(tm.get_preload("assets/jerry.png").unwrap());
 
 
 let mut bug = false;
@@ -175,15 +210,15 @@ img_bug.clear();
             img.set_x(old_pos.x); // Undo if collision happens
         }
                     if check_collision(&img, &img_wall, 1){
-                img.set_x(40.0);
-                img.set_y(30.0);
+                img.set_x(old_pos.x);
+                img.set_y(old_pos.y + 20.0);
             }
 
                      if check_collision(&img, &img_pumba, 1) && bug == false{
                 img.set_x(old_pos.x);
                 lbl_out.set_text("Mhhhhh, me Pumba hungry, if only a had a bug to eat!");
             }
-            else {
+            else if check_collision(&img, &img_pumba, 1) && bug == true {
 lbl_out.set_text("Mhhhhh, me Pumba Full, I let you through");
             }
     }
@@ -195,15 +230,15 @@ lbl_out.set_text("Mhhhhh, me Pumba Full, I let you through");
                 img.set_y(old_pos.y); // Undo if collision happens
             }
             if check_collision(&img, &img_wall, 1){
-                img.set_y(30.0);
-                img.set_x(40.0);
+                img.set_y(old_pos.y + 20.0);
+                img.set_x(old_pos.x);
             }
 
             if check_collision(&img, &img_pumba, 1) && bug == false{
                 img.set_y(old_pos.y);
                 lbl_out.set_text("Mhhhhh, me Pumba hungry, if only a had a bug to eat!");
             }
-            else {
+            else if check_collision(&img, &img_pumba, 1) && bug == true {
                 lbl_out.set_text("Mhhhhh, me Pumba Full, I let you through");
             }
     }
@@ -214,7 +249,7 @@ lbl_out.set_text("Mhhhhh, me Pumba Full, I let you through");
         clear_background(WHITE);
         draw_line(40.0, 40.0, 100.0, 200.0, 15.0, BLUE);
         draw_rectangle(screen_width() / 2.0 - 60.0, 100.0, 120.0, 60.0, GREEN);
-if btn_text.click() {
+if btn_exit.click() {
 break;
 }
 
@@ -246,11 +281,15 @@ if wall_left == false {
 
 img_maze.draw();
 img.draw();
-img_tom.draw();
 img_pumba.draw();
 img_bug.draw();
 img_wall.draw();
+img_outside_wall_left.draw();
+img_outside_wall_right.draw();
+img_outside_wall_down.draw();
 lbl_out.draw();
+img_jerry.draw();
+
 draw_grid(50.0, RED);
         next_frame().await;
     }
