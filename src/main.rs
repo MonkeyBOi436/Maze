@@ -103,8 +103,8 @@ let mut img = StillImage::new(
         "",     // Empty string creates a transparent image
         104.0,  // width
         108.0,  // height
-        1160.0,  // x position
-        980.0,   // y position
+        2050.0,  // x position
+        1150.0,   // y position
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
@@ -244,6 +244,7 @@ lbl_out.set_text("Mhhhhh, me Pumba Full, I let you through");
     }
         if collision {
             bug = true;
+            img_bug.clear();
         }
 // Update the module's position
         clear_background(WHITE);
