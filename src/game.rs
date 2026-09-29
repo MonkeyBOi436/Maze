@@ -13,7 +13,7 @@ use crate::ui::still_image::StillImage;
 use crate::ui::text_button::TextButton;
  use crate::utils::preload_image::TextureManager;
 use crate::utils::collision::check_collision;
-    use crate::ui::label::Label;
+use crate::ui::label::Label;
 
 
 /// Set up window settings before the app runs
@@ -35,7 +35,7 @@ let tm = TextureManager::new();
     );
 
 
- tm.preload_all(&["assets/tom.png" , "assets/maze_1.png" , "assets/pumba.png" , "assets/g_bug.png", "assets/wall.png" , "assets/wall_vert.png" , "assets/jerry.png"]).await;
+tm.preload_with_loading_screen(&["assets/tom.png" , "assets/maze_1.png" , "assets/pumba.png" , "assets/g_bug.png", "assets/wall.png" , "assets/wall_vert.png" , "assets/jerry.png"], None, None).await;
 
  let mut lbl_out = Label::new("You are trapped in a maze to escape\n you need to go through Pumba the pig.", 1150.0, 1150.0, 30);
 
@@ -134,7 +134,6 @@ let mut img = StillImage::new(
         1.0,    // Normal zoom (100%)
     ).await;
 
-
     let mut wall_left = true;
 
     img.set_preload(tm.get_preload("assets/tom.png").unwrap());
@@ -150,8 +149,8 @@ img_jerry.set_preload(tm.get_preload("assets/jerry.png").unwrap());
 
 let mut bug = false;
 
-    loop {
 
+    loop {
 
 let collision = check_collision(&img, &img_bug, 1);
 
@@ -173,7 +172,6 @@ img_bug.clear();
     if is_key_down(KeyCode::Up) {
         move_dir.y -= 2.0;
     }
-
 
     // Normalize the movement to prevent faster diagonal movement
     if move_dir.length() > 0.0 {
@@ -232,16 +230,15 @@ lbl_out.set_text("Mhhhhh, me Pumba Full, I let you through");
 // Update the module's position
         clear_background(WHITE);
 if btn_exit.click() {
-return "win".to_string();
+return "_exit".to_string();
 }
-
 
      if check_collision(&img, &img_jerry, 1){
                 return "win".to_string();
             }
 
         let mut x = img_wall.get_x();
-        
+
 if x <= 800.0{
     wall_left = true;
     img_wall.set_x(x);
@@ -261,7 +258,6 @@ if wall_left == false {
     x -= 2.0;
     img_wall.set_x(x);
 }
-
 
 img_maze.draw();
 img.draw();
